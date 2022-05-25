@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+COPY src/PokemonBackend.Api/PokemonBackend.Api.csproj PokemonBackend.Api/PokemonBackend.Api.csproj
+COPY src/PokemonBackend.Core/PokemonBackend.Core.csproj PokemonBackend.Core/PokemonBackend.Core.csproj
+COPY src/PokemonBackend.Infrastructure/PokemonBackend.Infrastructure.csproj PokemonBackend.Infrastructure/PokemonBackend.Infrastructure.csproj
+RUN dotnet restore "PokemonBackend.Api/PokemonBackend.Api.csproj"
+
+COPY src/PokemonBackend.Api/ PokemonBackend.Api/
+COPY src/PokemonBackend.Core/ PokemonBackend.Core/
+COPY src/PokemonBackend.Infrastructure/ PokemonBackend.Infrastructure/
+WORKDIR /src/PokemonBackend.Api
+RUN dotnet publish -c Release -o /app "PokemonBackend.Api.csproj"
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
+ENV ASPNETCORE_URLS=http://+:5000
+EXPOSE 5000
+WORKDIR /app
+COPY --from=build /app .
+ENTRYPOINT ["dotnet", "PokemonBackend.Api.dll"]
