@@ -27,10 +27,9 @@ public class PokemonService : IPokemonService
         
         string pokemonSpeciesDescription = await pokemonDataBroker
             .GetPokemonSpeciesDescription(GetSpeciesUrlId(pokemonSpeciesUrl));
-
-        string shakespeareDescriptionTranslation =
-            await shakespearTranslatorBroker.GetShakespeareTranslation(pokemonSpeciesDescription) ??
-            pokemonSpeciesDescription;
+            
+        string shakespeareDescriptionTranslation = await shakespearTranslatorBroker
+            .GetShakespeareTranslation(pokemonSpeciesDescription) ?? pokemonSpeciesDescription;
 
         PokemonApiResponse pokemonApiResponse = new(pokemon, shakespeareDescriptionTranslation);
         return pokemonApiResponse;
